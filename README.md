@@ -13,10 +13,22 @@ npm install
 npm run dev
 ```
 
+Run the API in a second terminal:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+API documentation is available at `http://localhost:8000/docs`.
+
 ## Architecture
 
 - Frontend: React + TypeScript + Vite
-- Backend: FastAPI (next milestone)
+- Backend: FastAPI with SQLAlchemy
 - Database and authentication: Supabase/PostgreSQL (next milestone)
 
 ## Roadmap
@@ -34,3 +46,6 @@ npm run dev
 - [x] Deterministic signal and priority rules engine
 - [x] Evidence grounded action center with status tracking
 - [ ] LLM interpretation layer backed by structured evidence
+- [x] FastAPI health and CRUD endpoints with SQLite/PostgreSQL support
+- [x] Persistent database models and automated API tests
+- [ ] Connect the React data layer to the API
