@@ -27,3 +27,12 @@ def test_competitor_persistence():
         assert created.status_code==201
         rows=client.get(f"/api/competitors?business_id={business_id}").json()
         assert len(rows)==1 and rows[0]["name"]=="Nearby Company"
+
+def test_authentication_flow():
+    email=f"user-{os.urandom(4).hex()}@example.com"
+    with TestClient(app) as client:
+        registered=client.post("/api/auth/register",json={"name":"Test User","email":email,"password":"securepass123"})
+        assert registered.status_code==201
+        token=registered.json()["access_token"]
+        assert client.get("/api/auth/me",headers={"Authorization":f"Bearer {token}"}).status_code==200
+        assert client.post("/api/auth/login",json={"email":email,"password":"wrongpass"}).status_code==401
