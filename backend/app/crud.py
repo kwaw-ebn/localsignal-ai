@@ -13,7 +13,7 @@ def crud_router(prefix:str, tag:str, model, create_schema:type[BaseModel], read_
         return db.scalars(statement.order_by(model.id.desc())).all()
     @router.post("",response_model=read_schema,status_code=status.HTTP_201_CREATED)
     def create_item(payload:create_schema,db:Session=Depends(get_db)):
-        item=model(**payload.model_dump(mode="json"));db.add(item);db.commit();db.refresh(item);return item
+        item=model(**payload.model_dump());db.add(item);db.commit();db.refresh(item);return item
     @router.get("/{item_id}",response_model=read_schema)
     def get_item(item_id:int,db:Session=Depends(get_db)):
         item=db.get(model,item_id)
@@ -23,7 +23,7 @@ def crud_router(prefix:str, tag:str, model, create_schema:type[BaseModel], read_
     def update_item(item_id:int,payload:create_schema,db:Session=Depends(get_db)):
         item=db.get(model,item_id)
         if not item: raise HTTPException(404,"Record not found")
-        for key,value in payload.model_dump(mode="json").items(): setattr(item,key,value)
+        for key,value in payload.model_dump().items(): setattr(item,key,value)
         db.commit();db.refresh(item);return item
     @router.delete("/{item_id}",status_code=status.HTTP_204_NO_CONTENT)
     def delete_item(item_id:int,db:Session=Depends(get_db)):
