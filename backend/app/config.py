@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     app_name: str = "LocalSignal AI API"
     database_url: str = "sqlite:///./localsignal.db"
     cors_origins: str = "http://localhost:5173"
+    auth_secret: str = "local-development-secret-change-before-deploying"
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property
