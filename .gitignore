@@ -4,3 +4,8 @@ dist/
 .env.local
 *.log
 *.tsbuildinfo
+__pycache__/
+*.py[cod]
+*.db
+.pytest_cache/
+.venv/
