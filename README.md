@@ -31,5 +31,6 @@ npm run dev
 - [x] Reviews, ratings, sentiment, themes, filtering, and reputation insights
 - [x] Interactive rules based website audit interface and saved reports
 - [ ] Live FastAPI website crawler and audit API
-- [ ] Signal and rules engine
-- [ ] Evidence-grounded AI recommendations
+- [x] Deterministic signal and priority rules engine
+- [x] Evidence grounded action center with status tracking
+- [ ] LLM interpretation layer backed by structured evidence
