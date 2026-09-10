@@ -49,4 +49,4 @@ API documentation is available at `http://localhost:8000/docs`.
 - [x] FastAPI health and CRUD endpoints with SQLite/PostgreSQL support
 - [x] Persistent database models and automated API tests
 - [x] Connect onboarding and browser data migration to the FastAPI API
-- [ ] Replace remaining browser-first CRUD operations with API-first hooks
+- [x] API-first collection hooks for competitor, keyword, and review CRUD
