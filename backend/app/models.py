@@ -14,6 +14,7 @@ class User(Base):
 class Business(Base):
     __tablename__ = "businesses"
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
     name: Mapped[str] = mapped_column(String(160), index=True)
     website: Mapped[str] = mapped_column(String(500))
     industry: Mapped[str] = mapped_column(String(120))
