@@ -10,6 +10,7 @@ import WebsiteAuditPage from './WebsiteAuditPage'
 import ActionCenterPage from './ActionCenterPage'
 import { api } from './api'
 import SyncStatus from './SyncStatus'
+import AuthPage from './AuthPage'
 
 const stats = [
   {label:'Local visibility', value:'72', suffix:'/100', delta:'+4 this month', icon:MapPin, tone:'purple'},
@@ -52,10 +53,12 @@ function ModulePage({id,business}:{id:string;business:Business}){
 }
 
 function App(){
+ const [user,setUser]=useState<any>(()=>{try{return JSON.parse(localStorage.getItem('localsignal-user')||'null')}catch{return null}})
  const [page,setPage]=useState('overview'),[showOnboarding,setShowOnboarding]=useState(false)
  const [business,setBusiness]=useState<Business>(()=>{try{return JSON.parse(localStorage.getItem('localsignal-business')||'null')||starter}catch{return starter}})
  useEffect(()=>{if(!localStorage.getItem('localsignal-onboarded'))setShowOnboarding(true)},[])
  const save=async(b:Business)=>{setBusiness(b);localStorage.setItem('localsignal-business',JSON.stringify(b));try{const saved=await api.create<{id:number}>('businesses',b);localStorage.setItem('localsignal-business-id',String(saved.id))}catch{localStorage.setItem('localsignal-api-mode','offline')}localStorage.setItem('localsignal-onboarded','true');setShowOnboarding(false)}
+ if(!user)return <AuthPage onAuthenticated={setUser}/>
  return <div className="app">
   {showOnboarding&&<Onboarding initial={business} onSave={save} onClose={()=>setShowOnboarding(false)}/>} 
   <aside className="sidebar">
