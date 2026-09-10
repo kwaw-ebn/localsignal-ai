@@ -29,6 +29,7 @@ npm run dev
 - [ ] Automated competitor comparison engine
 - [x] Local keyword tracking, rank movement, search, and browser persistence
 - [x] Reviews, ratings, sentiment, themes, filtering, and reputation insights
-- [ ] Website audit API
+- [x] Interactive rules based website audit interface and saved reports
+- [ ] Live FastAPI website crawler and audit API
 - [ ] Signal and rules engine
 - [ ] Evidence-grounded AI recommendations
