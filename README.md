@@ -22,7 +22,9 @@ npm run dev
 ## Roadmap
 
 - [x] Responsive executive dashboard prototype
-- [ ] Business onboarding and authentication
+- [x] Business onboarding with browser saved workspace data
+- [x] Functional dashboard navigation and module empty states
+- [ ] Supabase authentication and cloud persistence
 - [ ] Competitor CRUD and comparison engine
 - [ ] Website audit API
 - [ ] Signal and rules engine
