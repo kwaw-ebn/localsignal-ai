@@ -27,6 +27,7 @@ npm run dev
 - [ ] Supabase authentication and cloud persistence
 - [x] Competitor CRUD, search, summary metrics, and browser persistence
 - [ ] Automated competitor comparison engine
+- [x] Local keyword tracking, rank movement, search, and browser persistence
 - [ ] Website audit API
 - [ ] Signal and rules engine
 - [ ] Evidence-grounded AI recommendations
