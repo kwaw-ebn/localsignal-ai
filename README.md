@@ -28,6 +28,7 @@ npm run dev
 - [x] Competitor CRUD, search, summary metrics, and browser persistence
 - [ ] Automated competitor comparison engine
 - [x] Local keyword tracking, rank movement, search, and browser persistence
+- [x] Reviews, ratings, sentiment, themes, filtering, and reputation insights
 - [ ] Website audit API
 - [ ] Signal and rules engine
 - [ ] Evidence-grounded AI recommendations
