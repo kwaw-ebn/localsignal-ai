@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { ArrowDown, ArrowUp, Edit3, MapPin, Minus, Plus, Search, Target, Trash2, TrendingUp, X } from 'lucide-react'
 import './visibility.css'
+import './api-state.css'
+import { ApiState, useApiCollection } from './useApiCollection'
 
 type Keyword={id:string;keyword:string;location:string;position:number;previous:number;volume:number}
 const samples:Keyword[]=[
@@ -12,18 +14,18 @@ const samples:Keyword[]=[
 const blank={keyword:'',location:'',position:0,previous:0,volume:0}
 
 export default function VisibilityPage(){
- const [items,setItems]=useState<Keyword[]>(()=>{try{return JSON.parse(localStorage.getItem('localsignal-keywords')||'null')||samples}catch{return samples}})
+ const {items,connected,save,remove}=useApiCollection<Keyword>('keywords','localsignal-keywords',samples,x=>x)
+ const saveItems=(next:Keyword[])=>{const deleted=items.find(x=>!next.some(n=>n.id===x.id));if(deleted)remove(deleted.id)}
  const [query,setQuery]=useState(''),[open,setOpen]=useState(false),[editing,setEditing]=useState<string|null>(null),[form,setForm]=useState(blank)
- const saveItems=(next:Keyword[])=>{setItems(next);localStorage.setItem('localsignal-keywords',JSON.stringify(next))}
  const filtered=useMemo(()=>items.filter(x=>(x.keyword+' '+x.location).toLowerCase().includes(query.toLowerCase())),[items,query])
  const ranked=items.filter(x=>x.position>0), top10=ranked.filter(x=>x.position<=10).length
  const average=ranked.length?Math.round(ranked.reduce((n,x)=>n+x.position,0)/ranked.length):0
  const improved=items.filter(x=>x.previous>x.position&&x.position>0).length
  const start=(item?:Keyword)=>{setEditing(item?.id||null);setForm(item?{...item}:blank);setOpen(true)}
- const submit=(e:React.FormEvent)=>{e.preventDefault();const next=editing?items.map(x=>x.id===editing?{...form,id:editing}:x):[...items,{...form,id:crypto.randomUUID()}];saveItems(next);setOpen(false)}
+ const submit=async(e:React.FormEvent)=>{e.preventDefault();await save(form,editing||undefined);setOpen(false)}
  const movement=(x:Keyword)=>x.position===x.previous?0:x.previous-x.position
  return <>
-  <header><div><h1>Local visibility</h1><p>Track where your business appears for valuable searches in each service area.</p></div><button className="primary page-button" onClick={()=>start()}><Plus size={16}/>Add keyword</button></header>
+  <header><div><h1>Local visibility</h1><p>Track where your business appears for valuable searches in each service area.<ApiState connected={connected}/></p></div><button className="primary page-button" onClick={()=>start()}><Plus size={16}/>Add keyword</button></header>
   <section className="visibility-stats"><article><span><Target/></span><div><small>Keywords tracked</small><b>{items.length}</b></div></article><article><span><TrendingUp/></span><div><small>Keywords in top 10</small><b>{top10}</b></div></article><article><span><MapPin/></span><div><small>Average position</small><b>{average||'—'}</b></div></article><article><span><ArrowUp/></span><div><small>Improved keywords</small><b>{improved}</b></div></article></section>
   <article className="panel visibility-panel"><div className="visibility-toolbar"><div><h2>Tracked keywords</h2><p>Positions are manually entered in this MVP and ready for an API connection later.</p></div><label><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search keywords"/></label></div>
    {filtered.length?<div className="visibility-table-wrap"><table className="visibility-table"><thead><tr><th>Keyword</th><th>Location</th><th>Position</th><th>Movement</th><th>Search volume</th><th>Actions</th></tr></thead><tbody>{filtered.map(item=>{const move=movement(item);return <tr key={item.id}><td><b>{item.keyword}</b></td><td><MapPin size={13}/>{item.location}</td><td><span className={'position '+(item.position<=3?'top3':item.position<=10?'top10':'other')}>{item.position||'—'}</span></td><td><span className={'movement '+(move>0?'up':move<0?'down':'flat')}>{move>0?<ArrowUp/>:move<0?<ArrowDown/>:<Minus/>}{move===0?'No change':Math.abs(move)+' places'}</span></td><td>{item.volume?item.volume.toLocaleString():'—'}</td><td><div className="row-actions"><button onClick={()=>start(item)} aria-label={`Edit ${item.keyword}`}><Edit3/></button><button className="delete" onClick={()=>{if(confirm(`Remove “${item.keyword}”?`))saveItems(items.filter(x=>x.id!==item.id))}} aria-label={`Delete ${item.keyword}`}><Trash2/></button></div></td></tr>})}</tbody></table></div>:<div className="visibility-empty"><Search/><h2>No matching keywords</h2><p>Add a keyword or change your search.</p></div>}
