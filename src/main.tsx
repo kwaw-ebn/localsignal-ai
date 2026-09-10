@@ -8,6 +8,8 @@ import VisibilityPage from './VisibilityPage'
 import ReviewsPage from './ReviewsPage'
 import WebsiteAuditPage from './WebsiteAuditPage'
 import ActionCenterPage from './ActionCenterPage'
+import { api } from './api'
+import SyncStatus from './SyncStatus'
 
 const stats = [
   {label:'Local visibility', value:'72', suffix:'/100', delta:'+4 this month', icon:MapPin, tone:'purple'},
@@ -53,7 +55,7 @@ function App(){
  const [page,setPage]=useState('overview'),[showOnboarding,setShowOnboarding]=useState(false)
  const [business,setBusiness]=useState<Business>(()=>{try{return JSON.parse(localStorage.getItem('localsignal-business')||'null')||starter}catch{return starter}})
  useEffect(()=>{if(!localStorage.getItem('localsignal-onboarded'))setShowOnboarding(true)},[])
- const save=(b:Business)=>{setBusiness(b);localStorage.setItem('localsignal-business',JSON.stringify(b));localStorage.setItem('localsignal-onboarded','true');setShowOnboarding(false)}
+ const save=async(b:Business)=>{setBusiness(b);localStorage.setItem('localsignal-business',JSON.stringify(b));try{const saved=await api.create<{id:number}>('businesses',b);localStorage.setItem('localsignal-business-id',String(saved.id))}catch{localStorage.setItem('localsignal-api-mode','offline')}localStorage.setItem('localsignal-onboarded','true');setShowOnboarding(false)}
  return <div className="app">
   {showOnboarding&&<Onboarding initial={business} onSave={save} onClose={()=>setShowOnboarding(false)}/>} 
   <aside className="sidebar">
@@ -62,7 +64,7 @@ function App(){
    <nav>
     {navigation.map(([id,label,Icon])=><button key={id} className={page===id?'active':''} onClick={()=>setPage(id)}><Icon/>{label}{id==='actions'&&<span className="badge">8</span>}</button>)}
    </nav>
-   <div className="nav-bottom"><a><Settings/>Settings</a><a><CircleHelp/>Help & support</a><div className="user"><span className="avatar">EK</span><span><b>Ebenezer Kwaw</b><small>Owner</small></span></div></div>
+   <div className="nav-bottom"><SyncStatus/><a><Settings/>Settings</a><a><CircleHelp/>Help & support</a><div className="user"><span className="avatar">EK</span><span><b>Ebenezer Kwaw</b><small>Owner</small></span></div></div>
   </aside>
   <main>{page==='overview'?<>
    <header><div><h1>Good morning, Ebenezer</h1><p>Here is what is happening in your local market.</p></div><div className="header-actions"><button className="icon"><Bell size={19}/><i/></button><button className="primary"><Search size={17}/>Run new analysis</button></div></header>
