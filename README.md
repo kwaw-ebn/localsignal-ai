@@ -48,4 +48,5 @@ API documentation is available at `http://localhost:8000/docs`.
 - [ ] LLM interpretation layer backed by structured evidence
 - [x] FastAPI health and CRUD endpoints with SQLite/PostgreSQL support
 - [x] Persistent database models and automated API tests
-- [ ] Connect the React data layer to the API
+- [x] Connect onboarding and browser data migration to the FastAPI API
+- [ ] Replace remaining browser-first CRUD operations with API-first hooks
