@@ -25,6 +25,8 @@ uvicorn app.main:app --reload
 
 API documentation is available at `http://localhost:8000/docs`.
 
+Create or upgrade database tables with `cd backend && alembic upgrade head`.
+
 ## Architecture
 
 - Frontend: React + TypeScript + Vite
@@ -52,3 +54,5 @@ API documentation is available at `http://localhost:8000/docs`.
 - [x] API-first collection hooks for competitor, keyword, and review CRUD
 - [x] Account registration, login, password hashing, and expiring access tokens
 - [x] Authenticated APIs and cross user workspace isolation
+- [x] Alembic database migrations and initial production schema
+- [x] Docker Compose and Render deployment blueprints
