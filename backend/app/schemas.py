@@ -4,6 +4,12 @@ from pydantic import BaseModel, ConfigDict, Field
 class ORMModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+class RegisterRequest(BaseModel):
+    name:str=Field(min_length=2,max_length=120); email:str=Field(pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$",max_length=240); password:str=Field(min_length=8,max_length=128)
+class LoginRequest(BaseModel): email:str; password:str
+class UserRead(ORMModel): id:int; name:str; email:str
+class TokenResponse(BaseModel): access_token:str; token_type:str="bearer"; user:UserRead
+
 class BusinessCreate(BaseModel):
     name: str = Field(min_length=1, max_length=160)
     website: str = Field(pattern=r"^https?://", max_length=500)
