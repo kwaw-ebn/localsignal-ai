@@ -50,3 +50,4 @@ API documentation is available at `http://localhost:8000/docs`.
 - [x] Persistent database models and automated API tests
 - [x] Connect onboarding and browser data migration to the FastAPI API
 - [x] API-first collection hooks for competitor, keyword, and review CRUD
+- [x] Account registration, login, password hashing, and expiring access tokens
