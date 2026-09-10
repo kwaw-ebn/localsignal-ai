@@ -10,7 +10,6 @@ from .auth import router as auth_router
 
 @asynccontextmanager
 async def lifespan(_:FastAPI):
-    Base.metadata.create_all(bind=engine)
     yield
 
 settings=get_settings()
