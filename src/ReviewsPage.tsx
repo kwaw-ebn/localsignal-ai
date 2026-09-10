@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Filter, MessageSquare, Plus, Search, Star, Trash2, TrendingUp, X } from 'lucide-react'
 import './reviews.css'
+import './api-state.css'
+import { ApiState, useApiCollection } from './useApiCollection'
 
 type Sentiment='Positive'|'Neutral'|'Negative'
 type Review={id:string;customer:string;source:string;rating:number;date:string;text:string;theme:string;sentiment:Sentiment}
@@ -13,16 +15,16 @@ const samples:Review[]=[
 const blank={customer:'',source:'Google',rating:5,date:new Date().toISOString().slice(0,10),text:'',theme:'Professionalism',sentiment:'Positive' as Sentiment}
 
 export default function ReviewsPage(){
- const [items,setItems]=useState<Review[]>(()=>{try{return JSON.parse(localStorage.getItem('localsignal-reviews')||'null')||samples}catch{return samples}})
+ const {items,connected,save,remove}=useApiCollection<Review>('reviews','localsignal-reviews',samples,x=>({customer:x.customer,source:x.source,rating:x.rating,review_date:x.date,text:x.text,theme:x.theme,sentiment:x.sentiment}),row=>({...row,id:String(row.id),date:row.review_date}))
  const [query,setQuery]=useState(''),[filter,setFilter]=useState('All'),[open,setOpen]=useState(false),[form,setForm]=useState(blank)
- const saveItems=(next:Review[])=>{setItems(next);localStorage.setItem('localsignal-reviews',JSON.stringify(next))}
+ const saveItems=(next:Review[])=>{const deleted=items.find(x=>!next.some(n=>n.id===x.id));if(deleted)remove(deleted.id)}
  const filtered=useMemo(()=>items.filter(x=>(filter==='All'||x.sentiment===filter)&&[x.customer,x.text,x.theme,x.source].join(' ').toLowerCase().includes(query.toLowerCase())),[items,query,filter])
  const average=items.length?(items.reduce((n,x)=>n+x.rating,0)/items.length).toFixed(1):'0.0'
  const positive=items.length?Math.round(items.filter(x=>x.sentiment==='Positive').length/items.length*100):0
  const themes=Object.entries(items.reduce<Record<string,number>>((a,x)=>(a[x.theme]=(a[x.theme]||0)+1,a),{})).sort((a,b)=>b[1]-a[1])
- const submit=(e:React.FormEvent)=>{e.preventDefault();saveItems([{...form,id:crypto.randomUUID()},...items]);setOpen(false);setForm(blank)}
+ const submit=async(e:React.FormEvent)=>{e.preventDefault();await save(form);setOpen(false);setForm(blank)}
  return <>
-  <header><div><h1>Reviews and reputation</h1><p>Understand what customers value, where concerns appear, and how reputation changes.</p></div><button className="primary page-button" onClick={()=>setOpen(true)}><Plus size={16}/>Add review</button></header>
+  <header><div><h1>Reviews and reputation</h1><p>Understand what customers value, where concerns appear, and how reputation changes.<ApiState connected={connected}/></p></div><button className="primary page-button" onClick={()=>setOpen(true)}><Plus size={16}/>Add review</button></header>
   <section className="review-stats"><article><span><Star/></span><div><small>Average rating</small><b>{average}</b></div></article><article><span><MessageSquare/></span><div><small>Reviews analyzed</small><b>{items.length}</b></div></article><article><span><TrendingUp/></span><div><small>Positive sentiment</small><b>{positive}%</b></div></article><article><span><Filter/></span><div><small>Leading theme</small><b>{themes[0]?.[0]||'—'}</b></div></article></section>
   <section className="review-grid"><article className="panel reviews-list"><div className="review-toolbar"><div><h2>Customer reviews</h2><p>Search and filter the evidence behind your reputation score.</p></div><div className="review-controls"><label><Search/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search reviews"/></label><select value={filter} onChange={e=>setFilter(e.target.value)}><option>All</option><option>Positive</option><option>Neutral</option><option>Negative</option></select></div></div>
    <div className="review-items">{filtered.length?filtered.map(item=><div className="review-item" key={item.id}><div className="review-avatar">{item.customer.slice(0,1).toUpperCase()}</div><div className="review-copy"><div className="review-title"><b>{item.customer}</b><span>{item.source} · {new Date(item.date+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}</span><button onClick={()=>{if(confirm('Remove this review?'))saveItems(items.filter(x=>x.id!==item.id))}} aria-label="Delete review"><Trash2/></button></div><div className="review-rating">{[1,2,3,4,5].map(n=><Star key={n} className={n<=item.rating?'filled':''} fill={n<=item.rating?'currentColor':'none'}/>)}</div><p>{item.text}</p><div className="review-tags"><span>{item.theme}</span><span className={item.sentiment.toLowerCase()}>{item.sentiment}</span></div></div></div>):<div className="review-empty"><Search/><h2>No reviews match</h2><p>Change the filter or add a review.</p></div>}</div>
