@@ -6,6 +6,7 @@ import './onboarding.css'
 import CompetitorPage from './CompetitorPage'
 import VisibilityPage from './VisibilityPage'
 import ReviewsPage from './ReviewsPage'
+import WebsiteAuditPage from './WebsiteAuditPage'
 
 const stats = [
   {label:'Local visibility', value:'72', suffix:'/100', delta:'+4 this month', icon:MapPin, tone:'purple'},
@@ -72,7 +73,7 @@ function App(){
    <section className="lower">
     <article className="panel table-panel"><div className="panel-head"><div><span className="eyebrow muted">COMPETITOR SNAPSHOT</span><h2>How you compare</h2></div><button className="text-btn">View all <ChevronRight size={15}/></button></div><table><thead><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Visibility</th></tr></thead><tbody>{competitors.map(c=><tr className={c.yours?'yours':''} key={c.name}><td><span className="company"><Building2 size={15}/></span><b>{c.name}</b>{c.yours&&<small>YOU</small>}</td><td><Star size={14} fill="currentColor"/> {c.rating}</td><td>{c.reviews}</td><td><div className="mini"><i style={{width:c.visibility+'%'}}/></div><b>{c.visibility}</b></td></tr>)}</tbody></table></article>
     <article className="panel actions"><div className="panel-head"><div><span className="eyebrow muted">ACTION CENTER</span><h2>What to do next</h2></div><button className="text-btn">View all <ChevronRight size={15}/></button></div>{actions.map(a=><div className="action" key={a.title}><span className={'dot '+a.color}/><div><small>{a.level}</small><h3>{a.title}</h3><p>{a.detail}</p><button>{a.cta}<ChevronRight size={14}/></button></div></div>)}</article>
-   </section></>:page==='competitors'?<CompetitorPage/>:page==='visibility'?<VisibilityPage/>:page==='reviews'?<ReviewsPage/>:<ModulePage id={page} business={business}/>}</main>
+   </section></>:page==='competitors'?<CompetitorPage/>:page==='visibility'?<VisibilityPage/>:page==='reviews'?<ReviewsPage/>:page==='website'?<WebsiteAuditPage initialUrl={business.website}/>:<ModulePage id={page} business={business}/>}</main>
  </div>
 }
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>)
