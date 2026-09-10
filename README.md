@@ -25,7 +25,8 @@ npm run dev
 - [x] Business onboarding with browser saved workspace data
 - [x] Functional dashboard navigation and module empty states
 - [ ] Supabase authentication and cloud persistence
-- [ ] Competitor CRUD and comparison engine
+- [x] Competitor CRUD, search, summary metrics, and browser persistence
+- [ ] Automated competitor comparison engine
 - [ ] Website audit API
 - [ ] Signal and rules engine
 - [ ] Evidence-grounded AI recommendations
