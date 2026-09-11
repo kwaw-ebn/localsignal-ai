@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { BarChart3, Bell, Building2, ChevronRight, CircleHelp, Globe2, LayoutDashboard, Lightbulb, MapPin, Search, Settings, Star, TrendingUp, Users } from 'lucide-react'
+import { BarChart3, Bell, Building2, ChevronRight, CircleHelp, Globe2, LayoutDashboard, Lightbulb, MapPin, Search, Settings, Share2, Star, Store, TrendingUp, Users } from 'lucide-react'
 import './styles.css'
 import './onboarding.css'
 import CompetitorPage from './CompetitorPage'
@@ -11,6 +11,7 @@ import ActionCenterPage from './ActionCenterPage'
 import { api } from './api'
 import SyncStatus from './SyncStatus'
 import AuthPage from './AuthPage'
+import MarketingAuditPage from './MarketingAuditPage'
 
 const stats = [
   {label:'Local visibility', value:'72', suffix:'/100', delta:'+4 this month', icon:MapPin, tone:'purple'},
@@ -32,7 +33,7 @@ const actions = [
 
 const navigation = [
  ['overview','Overview',LayoutDashboard],['competitors','Competitors',Users],['visibility','Local visibility',MapPin],
- ['reviews','Reviews',Star],['website','Website audit',Globe2],['actions','Action center',Lightbulb]
+ ['reviews','Reviews',Star],['gbp','GBP audit',Store],['social','Social media audit',Share2],['website','Website audit',Globe2],['actions','Action center',Lightbulb]
 ] as const
 type Business = {name:string;website:string;industry:string;city:string;country:string}
 const starter:Business={name:'Ville Ann Services',website:'https://example.com',industry:'Cleaning services',city:'Fredericksburg, VA',country:'United States'}
@@ -79,7 +80,7 @@ function App(){
    <section className="lower">
     <article className="panel table-panel"><div className="panel-head"><div><span className="eyebrow muted">COMPETITOR SNAPSHOT</span><h2>How you compare</h2></div><button className="text-btn">View all <ChevronRight size={15}/></button></div><table><thead><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Visibility</th></tr></thead><tbody>{competitors.map(c=><tr className={c.yours?'yours':''} key={c.name}><td><span className="company"><Building2 size={15}/></span><b>{c.name}</b>{c.yours&&<small>YOU</small>}</td><td><Star size={14} fill="currentColor"/> {c.rating}</td><td>{c.reviews}</td><td><div className="mini"><i style={{width:c.visibility+'%'}}/></div><b>{c.visibility}</b></td></tr>)}</tbody></table></article>
     <article className="panel actions"><div className="panel-head"><div><span className="eyebrow muted">ACTION CENTER</span><h2>What to do next</h2></div><button className="text-btn">View all <ChevronRight size={15}/></button></div>{actions.map(a=><div className="action" key={a.title}><span className={'dot '+a.color}/><div><small>{a.level}</small><h3>{a.title}</h3><p>{a.detail}</p><button>{a.cta}<ChevronRight size={14}/></button></div></div>)}</article>
-   </section></>:page==='competitors'?<CompetitorPage/>:page==='visibility'?<VisibilityPage/>:page==='reviews'?<ReviewsPage/>:page==='website'?<WebsiteAuditPage initialUrl={business.website}/>:page==='actions'?<ActionCenterPage/>:<ModulePage id={page} business={business}/>}</main>
+   </section></>:page==='competitors'?<CompetitorPage/>:page==='visibility'?<VisibilityPage/>:page==='reviews'?<ReviewsPage/>:page==='gbp'?<MarketingAuditPage kind="gbp"/>:page==='social'?<MarketingAuditPage kind="social"/>:page==='website'?<WebsiteAuditPage initialUrl={business.website}/>:page==='actions'?<ActionCenterPage/>:<ModulePage id={page} business={business}/>}</main>
  </div>
 }
 ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App/></React.StrictMode>)
