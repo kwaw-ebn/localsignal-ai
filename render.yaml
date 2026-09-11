@@ -10,7 +10,7 @@ services:
       - key: AUTH_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        sync: false
+        value: https://localsignal-web.onrender.com
   - type: web
     name: localsignal-web
     runtime: static
