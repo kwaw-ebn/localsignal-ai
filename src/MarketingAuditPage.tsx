@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { CheckCircle2, ClipboardCheck, ExternalLink, RotateCcw, Save, Share2, Store, TrendingUp } from 'lucide-react'
+import { CheckCircle2, ClipboardCheck, ExternalLink, Play, RotateCcw, Save, Share2, Store, TrendingUp } from 'lucide-react'
 import './marketing-audit.css'
+import './audit-run.css'
 
 type AuditKind='gbp'|'social'
 type AuditItem={id:string;label:string;help:string;recommendation:string}
@@ -46,6 +47,7 @@ export default function MarketingAuditPage({kind}:{kind:AuditKind}){
  const rating=score>=85?'Excellent':score>=70?'Good':score>=50?'Needs attention':'High priority'
  const toggle=(id:string)=>setCompleted(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id])
  const save=()=>{const audit={score,completed,url,platform:kind==='social'?platform:undefined,date:new Date().toISOString()};localStorage.setItem(c.storage,JSON.stringify(audit));setSaved(audit);setNotice('Audit saved');setTimeout(()=>setNotice(''),2200)}
+ const runAudit=()=>{try{const profile=new URL(url);if(!['http:','https:'].includes(profile.protocol))throw new Error();const audit={score,completed,url,platform:kind==='social'?platform:undefined,date:new Date().toISOString()};localStorage.setItem(c.storage,JSON.stringify(audit));setSaved(audit);setNotice(`Audit complete: ${score}/100`);setTimeout(()=>setNotice(''),3500)}catch{setNotice('Enter a complete profile URL before running the audit')}}
  const reset=()=>{setCompleted([]);setSaved(null);setNotice('');localStorage.removeItem(c.storage)}
  return <>
   <header><div><h1>{c.title}</h1><p>{c.description}</p></div><div className="audit-header-actions"><button onClick={reset}><RotateCcw size={15}/>Reset</button><button className="primary page-button" onClick={save}><Save size={16}/>Save audit</button></div></header>
@@ -56,7 +58,7 @@ export default function MarketingAuditPage({kind}:{kind:AuditKind}){
   </section>
   <section className="audit-layout">
    <div>
-    <article className="panel audit-source"><div className="audit-section-title"><Icon/><div><h2>Profile details</h2><p>Identify the profile being assessed.</p></div></div><div className="audit-fields">{kind==='social'&&<label>Platform<select value={platform} onChange={e=>setPlatform(e.target.value)}><option>Instagram</option><option>Facebook</option><option>LinkedIn</option><option>TikTok</option><option>Pinterest</option><option>YouTube</option></select></label>}<label className={kind==='social'?'wide':''}>{c.urlLabel}<div className="url-input"><input type="url" value={url} onChange={e=>setUrl(e.target.value)} placeholder={c.urlPlaceholder}/>{url&&<a href={url} target="_blank" rel="noreferrer" aria-label="Open profile"><ExternalLink/></a>}</div></label></div></article>
+    <article className="panel audit-source"><div className="audit-section-title"><Icon/><div><h2>Profile details</h2><p>Identify the profile being assessed.</p></div></div><div className="audit-fields">{kind==='social'&&<label>Platform<select value={platform} onChange={e=>setPlatform(e.target.value)}><option>Instagram</option><option>Facebook</option><option>LinkedIn</option><option>TikTok</option><option>Pinterest</option><option>YouTube</option></select></label>}<label className={kind==='social'?'wide':''}>{c.urlLabel}<div className="url-input"><input type="url" value={url} onChange={e=>setUrl(e.target.value)} placeholder={c.urlPlaceholder}/>{url&&<a href={url} target="_blank" rel="noreferrer" aria-label="Open profile"><ExternalLink/></a>}</div></label></div><div className="audit-run"><p>Review the profile, complete the verified checklist below, then run the audit. Automatic Facebook scanning requires a future Meta API connection.</p><button className="primary" onClick={runAudit}><Play size={15}/>Run audit</button></div>{notice&&<div className="audit-notice">{notice}</div>}</article>
     <article className="panel audit-checklist"><div className="audit-section-title"><CheckCircle2/><div><h2>Audit checklist</h2><p>Select only checks you have verified.</p></div></div>{c.items.map(item=><label className={completed.includes(item.id)?'audit-check checked':'audit-check'} key={item.id}><input type="checkbox" checked={completed.includes(item.id)} onChange={()=>toggle(item.id)}/><span><b>{item.label}</b><small>{item.help}</small></span><em>{completed.includes(item.id)?'Pass':'Review'}</em></label>)}</article>
    </div>
    <aside><article className="panel audit-recommendations"><small>PRIORITY ACTIONS</small><h2>Recommendations</h2>{recommendations.length?recommendations.slice(0,6).map((item,index)=><div key={item}><span>{index+1}</span><p>{item}</p></div>):<div className="audit-complete"><CheckCircle2/><p>All checks passed. Save the audit and review it again next month.</p></div>}<button className="primary" onClick={save}><Save size={15}/>Save {score}/100 audit</button></article></aside>
